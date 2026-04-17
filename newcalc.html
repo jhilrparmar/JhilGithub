@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Multi-Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .calculator-container {
+            width: 350px;
+            background: #222;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+            color: white;
+        }
+        #display {
+            width: 95%;
+            height: 50px;
+            background: #fff;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: right;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .tabs button {
+            flex: 1;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            margin: 0 5px;
+            background: #444;
+            color: white;
+            font-weight: bold;
+        }
+        .tabs button.active {
+            background: #28a745;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            gap: 10px;
+        }
+        button.calc-btn {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+        button.calc-btn.operator {
+            background: #ff9500;
+        }
+        button.calc-btn.operator:hover {
+            background: #e08900;
+        }
+        button.calc-btn.equal {
+            background: #28a745;
+        }
+        button.calc-btn.equal:hover {
+            background: #218838;
+        }
+        .smart-output, .ca-output {
+            background: #fff;
+            color: #000;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            min-height: 30px;
+        }
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="calculator-container">
+    <input type="text" id="display" disabled>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="standard">Standard</button>
+        <button class="tab-btn" data-tab="scientific">Scientific</button>
+        <button class="tab-btn" data-tab="smart">Smart</button>
+        <button class="tab-btn" data-tab="ca">CA Formulas</button>
+    </div>
+
+    <!-- Standard Calculator -->
+    <div class="tab-content active" id="standard">
+        <div class="buttons">
+            <button class="calc-btn" onclick="clearDisplay()">C</button>
+            <button class="calc-btn" onclick="deleteLast()">DEL</button>
+            <button class="calc-btn" onclick="appendValue('%')">%</button>
+            <button class="calc-btn operator" onclick="appendValue('/')">÷</button>
+
+            <button class="calc-btn" onclick="appendValue('7')">7</button>
+            <button class="calc-btn" onclick="appendValue('8')">8</button>
+            <button class="calc-btn" onclick="appendValue('9')">9</button>
+            <button class="calc-btn operator" onclick="appendValue('*')">×</button>
+
+            <button class="calc-btn" onclick="appendValue('4')">4</button>
+            <button class="calc-btn" onclick="appendValue('5')">5</button>
+            <button class="calc-btn" onclick="appendValue('6')">6</button>
+            <button class="calc-btn operator" onclick="appendValue('-')">−</button>
+
+            <button class="calc-btn" onclick="appendValue('1')">1</button>
+            <button class="calc-btn" onclick="appendValue('2')">2</button>
+            <button class="calc-btn" onclick="appendValue('3')">3</button>
+            <button class="calc-btn operator" onclick="appendValue('+')">+</button>
+
+            <button class="calc-btn" onclick="appendValue('0')">0</button>
+            <button class="calc-btn" onclick="appendValue('.')">.</button>
+            <button class="calc-btn equal" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <!-- Scientific Calculator -->
+    <div class="tab-content" id="scientific">
+        <div class="buttons">
+            <button class="calc-btn" onclick="deleteLast()">DEL</button>
+            <button class="calc-btn" onclick="appendValue('Math.sin(')">sin</button>
+            <button class="calc-btn" onclick="appendValue('Math.cos(')">cos</button>
+            <button class="calc-btn" onclick="appendValue('Math.tan(')">tan</button>
+            <button class="calc-btn operator" onclick="appendValue('Math.PI')">π</button>
+
+            <button class="calc-btn" onclick="appendValue('Math.log(')">log</button>
+            <button class="calc-btn" onclick="appendValue('Math.sqrt(')">√</button>
+            <button class="calc-btn" onclick="appendValue('**')">^</button>
+            <button class="calc-btn operator" onclick="appendValue('/')">÷</button>
+
+            <button class="calc-btn" onclick="appendValue('7')">7</button>
+            <button class="calc-btn" onclick="appendValue('8')">8</button>
+            <button class="calc-btn" onclick="appendValue('9')">9</button>
+            <button class="calc-btn operator" onclick="appendValue('*')">×</button>
+
+            <button class="calc-btn" onclick="appendValue('4')">4</button>
+            <button class="calc-btn" onclick="appendValue('5')">5</button>
+            <button class="calc-btn" onclick="appendValue('6')">6</button>
+            <button class="calc-btn operator" onclick="appendValue('-')">−</button>
+
+            <button class="calc-btn" onclick="appendValue('1')">1</button>
+            <button class="calc-btn" onclick="appendValue('2')">2</button>
+            <button class="calc-btn" onclick="appendValue('3')">3</button>
+            <button class="calc-btn operator" onclick="appendValue('+')">+</button>
+
+            <button class="calc-btn" onclick="appendValue('0')">0</button>
+            <button class="calc-btn" onclick="appendValue('.')">.</button>
+            <button class="calc-btn equal" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <!-- Smart Calculator -->
+    <div class="tab-content" id="smart">
+        <select id="smartCategory" onchange="updateSmartFormulas()">
+            <option value="">Select Category</option>
+            <option value="geometry">Geometry</option>
+            <option value="finance">Finance</option>
+            <option value="profitloss">Profit & Loss</option>
+        </select>
+
+        <select id="smartFormula" onchange="createSmartInputs()">
+            <option value="">Select Formula</option>
+        </select>
+
+        <div id="smartInputs"></div>
+        <button class="calc-btn equal" onclick="calculateSmart()">Calculate</button>
+        <div class="smart-output" id="smartResult"></div>
+    </div>
+
+    <!-- CA Calculator -->
+    <div class="tab-content" id="ca">
+        <select id="caCategory" onchange="updateCAFormulas()">
+            <option value="">Select Category</option>
+            <option value="financial">Financial</option>
+            <option value="taxation">Taxation</option>
+            <option value="ratios">Accounting Ratios</option>
+        </select>
+
+        <select id="caFormula">
+            <option value="">Select Formula</option>
+        </select>
+
+        <div id="caInputs"></div>
+        <button class="calc-btn equal" onclick="calculateCA()">Calculate</button>
+        <div class="ca-output" id="caResult"></div>
+    </div>
+</div>
+
+<script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            contents.forEach(c => c.classList.remove('active'));
+            document.getElementById(tab.dataset.tab).classList.add('active');
+        });
+    });
+
+    // Standard & Scientific calculator
+    function appendValue(val) { document.getElementById('display').value += val; }
+    function clearDisplay() { document.getElementById('display').value = ''; }
+    function deleteLast() { 
+        let display = document.getElementById('display');
+        display.value = display.value.slice(0, -1);
+    }
+    function calculate() {
+        try {
+            let result = eval(document.getElementById('display').value);
+            document.getElementById('display').value = result;
+        } catch {
+            document.getElementById('display').value = 'Error';
+        }
+    }
+
+    // Smart Calculator
+    const smartFormulas = {
+        geometry: { "Area of Circle": (r)=>Math.PI*r*r, "Area of Rectangle": (l,w)=>l*w },
+        finance: { "Simple Interest": (P,R,T)=>P*R*T/100, "Compound Interest": (P,R,T)=>P*((1+R/100)**T)-P, "Present Value": (FV,R,T)=>FV/((1+R/100)**T), "Future Value": (PV,R,T)=>PV*((1+R/100)**T) },
+        profitloss: { "Profit": (CP,SP)=>SP-CP, "Loss": (CP,SP)=>CP-SP, "Discount": (MP,SP)=>MP-SP }
+    };
+    function updateSmartFormulas() {
+        const cat = document.getElementById('smartCategory').value;
+        const formulaSelect = document.getElementById('smartFormula');
+        formulaSelect.innerHTML = "<option value=''>Select Formula</option>";
+        document.getElementById('smartInputs').innerHTML = '';
+        if(!cat) return;
+        Object.keys(smartFormulas[cat]).forEach(f=>{
+            let opt=document.createElement('option');
+            opt.value=f; opt.text=f; formulaSelect.appendChild(opt);
+        });
+    }
+    function createSmartInputs() {
+        const cat = document.getElementById('smartCategory').value;
+        const formula = document.getElementById('smartFormula').value;
+        const inputDiv = document.getElementById('smartInputs');
+        inputDiv.innerHTML='';
+        if(!formula) return;
+        let params=smartFormulas[cat][formula].toString().match(/\(([^)]*)\)/)[1].split(',');
+        params.forEach(p=>{
+            let input=document.createElement('input');
+            input.type='number';
+            input.placeholder=p.trim();
+            input.id='smart_'+p.trim();
+            inputDiv.appendChild(input);
+        });
+    }
+    function calculateSmart() {
+        const cat=document.getElementById('smartCategory').value;
+        const formula=document.getElementById('smartFormula').value;
+        if(!cat||!formula){ alert("Please select category and formula."); return; }
+        let params=smartFormulas[cat][formula].toString().match(/\(([^)]*)\)/)[1].split(',');
+        let values=params.map(p=>parseFloat(document.getElementById('smart_'+p.trim()).value));
+        if(values.some(isNaN)){ alert("Please enter all input values."); return; }
+        let result=smartFormulas[cat][formula](...values);
+        document.getElementById('smartResult').innerText="Result: "+result;
+    }
+
+    // CA Calculator
+    const caFormulas = {
+        financial: { "Simple Interest": (P,R,T)=>P*R*T/100, "Compound Interest": (P,R,T)=>P*((1+R/100)**T)-P, "Profit": (CP,SP)=>SP-CP, "Loss": (CP,SP)=>CP-SP, "Discount": (MP,SP)=>MP-SP, "Present Value": (FV,R,T)=>FV/((1+R/100)**T), "Future Value": (PV,R,T)=>PV*((1+R/100)**T) },
+        taxation: { "GST Amount": (BP,GST)=>BP*GST/100, "Total Amount incl. GST": (BP,GST)=>BP*(1+GST/100), "Taxable Value from GST Amount": (GSTAmount,GST)=>GSTAmount*100/GST },
+        ratios: { "Current Ratio": (CA,CL)=>CA/CL, "Quick Ratio": (CA,Inventory,CL)=>(CA-Inventory)/CL, "Debt-Equity Ratio": (Debt,Equity)=>Debt/Equity, "Gross Profit Margin": (GP,Revenue)=>GP/Revenue*100, "Net Profit Margin": (NP,Revenue)=>NP/Revenue*100, "Inventory Turnover": (COGS,AvgInventory)=>COGS/AvgInventory, "Return on Equity (ROE)": (NetIncome,Equity)=>NetIncome/Equity }
+    };
+    function updateCAFormulas() {
+        const cat=document.getElementById('caCategory').value;
+        const formulaSelect=document.getElementById('caFormula');
+        formulaSelect.innerHTML="<option value=''>Select Formula</option>";
+        document.getElementById('caInputs').innerHTML='';
+        if(!cat) return;
+        Object.keys(caFormulas[cat]).forEach(f=>{
+            let opt=document.createElement('option');
+            opt.value=f; opt.text=f; formulaSelect.appendChild(opt);
+        });
+    }
+    document.getElementById('caFormula').addEventListener('change',function(){
+        const cat=document.getElementById('caCategory').value;
+        const formula=this.value;
+        const inputDiv=document.getElementById('caInputs');
+        inputDiv.innerHTML='';
+        if(!formula) return;
+        let params=caFormulas[cat][formula].toString().match(/\(([^)]*)\)/)[1].split(',');
+        params.forEach(p=>{
+            let input=document.createElement('input');
+            input.type='number';
+            input.placeholder=p.trim();
+            input.id='param_'+p.trim();
+            inputDiv.appendChild(input);
+        });
+    });
+    function calculateCA() {
+        const cat=document.getElementById('caCategory').value;
+        const formula=document.getElementById('caFormula').value;
+        if(!cat||!formula) return;
+        let params=caFormulas[cat][formula].toString().match(/\(([^)]*)\)/)[1].split(',');
+        let values=params.map(p=>parseFloat(document.getElementById('param_'+p.trim()).value));
+        if(values.some(isNaN)){ alert("Please enter all input values."); return; }
+        let result=caFormulas[cat][formula](...values);
+        document.getElementById('caResult').innerText="Result: "+result;
+    }
+</script>
+</body>
+</html>
